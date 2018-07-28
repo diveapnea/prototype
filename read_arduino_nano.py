@@ -75,16 +75,19 @@ text_min_a = plt.text(0,0,'') #dummy
 line_v = plt.plot(0,0) #dummy
 line_a = plt.plot(0,0) #dummy
 
-while True:
-    serial_line = ser.readline()
-    #extract float values
-    values = [float(s) for s in re.findall(r'-?\d+\.?\d*', serial_line)]
-    array_v.append(values[0]) #fixed array size to prevent speed degradation
-    array_a.append(values[1]) #fixed array size to prevent speed degradation
-    array_x.append(array_x[-1]+1) #fixed array size to prevent speed degradation
-    continuous_plot(array_x,array_v,array_a)
+try:
+	while True:
+		serial_line = ser.readline()
+		#extract float values
+		values = [float(s) for s in re.findall(r'-?\d+\.?\d*', serial_line)]
+		array_v.append(values[0]) #fixed array size to prevent speed degradation
+		array_a.append(values[1]) #fixed array size to prevent speed degradation
+		array_x.append(array_x[-1]+1) #fixed array size to prevent speed degradation
+		continuous_plot(array_x,array_v,array_a)
+except KeyboardInterrupt:
+	pass
     
 
     
 ser.close() # Only executes once the loop exits
-
+print 'Exiting...'
