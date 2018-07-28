@@ -1,0 +1,59 @@
+import serial
+import re
+import matplotlib.pyplot as plt
+import collections
+
+ 
+def init_plot():
+	#turn on interactive plotting
+	plt.ion()
+	plt.figure()
+	plt.title("Reading", fontsize=15)
+	plt.xlabel("time", fontsize=13)
+	plt.ylabel("Voltage and Current", fontsize=13)
+	plt.grid(True)
+
+	
+def continuous_plot(array_x, array_v, array_a):
+	global text_var_v, text_var_a, line_v, line_a
+	
+	line_v.pop(0).remove()
+	line_a.pop(0).remove()
+	
+	text_var_v.remove() #remove the old text
+	text_var_a.remove() #remove the old text
+	
+	line_v = plt.plot(array_x, array_v, '-b.')
+	line_a = plt.plot(array_x, array_a, '-r.')
+	plt.xlim(xmin=min(array_x), xmax=max(array_x))
+		
+	text_var_v = plt.text(array_x[-1], array_v[-1], str(array_v[-1])+'V')
+	text_var_a = plt.text(array_x[-1], array_a[-1], str(array_a[-1])+'A')
+	
+	plt.draw()
+
+ser = serial.Serial('/dev/cu.wchusbserialfa130', 9600)
+
+init_plot()
+
+size = 100
+array_v = collections.deque([None] * size, maxlen=size)
+array_a = collections.deque([None] * size, maxlen=size)
+array_x = collections.deque([0] * size, maxlen=size)
+text_var_v = plt.text(0,0,'') #dummy
+text_var_a = plt.text(0,0,'') #dummy
+line_v = plt.plot(0,0) #dummy
+line_a = plt.plot(0,0) #dummy
+
+while True:
+    serial_line = ser.readline()
+    #extract float values
+    values = [float(s) for s in re.findall(r'-?\d+\.?\d*', serial_line)]
+    array_v.append(values[0]) #fixed array size to prevent speed degradation
+    array_a.append(values[1]) #fixed array size to prevent speed degradation
+    array_x.append(array_x[-1]+1) #fixed array size to prevent speed degradation
+    continuous_plot(array_x,array_v,array_a)
+    
+
+    
+ser.close() # Only executes once the loop exits
