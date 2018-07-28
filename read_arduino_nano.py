@@ -57,3 +57,4 @@ while True:
 
     
 ser.close() # Only executes once the loop exits
+
