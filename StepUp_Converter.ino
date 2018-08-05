@@ -9,6 +9,9 @@
  * 
  * For pin 3,9,10,11 same thing with 31,3kHz max frequency
  * For pin3,9,10,11 counters would be TCCR1B and TCCR2B
+ * 
+ * IMPORTANT--> some big transformators with two coils do not work with the high frequency!!!!
+ * 
  */
 
 const int D5 = 5;
@@ -27,7 +30,7 @@ void loop() {
 
 
   float voltage = analogRead(A6) * (30.0*0.9384/ 1023.0); //voltage divider used to sense 5V at 30V real//0.9384 is the calibration value
-  if (voltage < 12.5 & pwm <144) pwm = pwm+1; //do not go to 100% PWM, which does not move anything
+  if (voltage < 12.5 & pwm <240) pwm = pwm+1; //do not go to 100% PWM, which does not move anything. 90% seems to be a golden value
   else if (pwm > 0) pwm = pwm-1; //underflow can occur
   analogWrite(D5, pwm); //PWM on D5  analogWrite values from 0 to 255  
 
