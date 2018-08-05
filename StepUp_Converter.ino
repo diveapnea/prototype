@@ -10,8 +10,11 @@
  * For pin 3,9,10,11 same thing with 31,3kHz max frequency
  * For pin3,9,10,11 counters would be TCCR1B and TCCR2B
  * 
- * IMPORTANT--> some big transformators with two coils do not work with the high frequency!!!!
- * 
+ * Ideal combination: the biggest trafo (with most right pin) or the smallest coil
+ * + 100uF 63V capacitor
+ * +schottky 1N 5819
+ * +IRFP4310ZPbF
+ * --> gives 4,2 times voltage gain
  */
 
 const int D5 = 5;
