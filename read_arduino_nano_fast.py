@@ -61,6 +61,7 @@ def continuous_plot(array_x, array_v, array_a):
 	text_min_a = plt.text(xmin, ymin, str(ymin)+'A')
 	
 	plt.draw()
+	plt.pause(.00001)
 
 ser = serial.Serial('/dev/cu.wchusbserialfa130', 1000000)
 
