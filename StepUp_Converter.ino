@@ -1,8 +1,8 @@
-//Atmega328 tested
-/*
+//Atmega 328 tested
+/* 
  * Pin 5 and 6 can go up tp 62,5kHz PWM
  * But the delay function becomes delay(62500) for 1 second
- * 0x01 ->62500khz
+ * 0x01 ->62500hz
  * 0x02 -->7800hz
  * 0x03 -->980Hz (default for pin 5/6)
  * 0x04 -->250hz
@@ -21,6 +21,7 @@
 const int D5 = 5;
 const int D3 = 3;
 uint8_t pwm = 0;
+uint8_t pwm_max = 0;
 
 void setup() {
   // put your setup code here, to run once:
@@ -37,23 +38,26 @@ void setup() {
   OCR2B = 32; //50% duty cycle. 0..to 63
 */
 
-  pinMode(D5, OUTPUT);
-  // Set up the 8MHz output @D5
+  pinMode(D5, OUTPUT); // output pin for OCR0A
+  // Set up the fast PWM up to 8Mhz output @D5
   TCCR0A = _BV(COM0A1) | _BV(COM0B1) | _BV(WGM01) | _BV(WGM00);
   TCCR0B = _BV(WGM02) | _BV(CS00);
   OCR0A = 15; //freq. divider // 1--> 8MHz,1bit pwm, 3-->4Mhz,2bit pwm, 7-->2Mhz,3bit pwm, 15-->1Mhz,4bit pwm etc.
   OCR0B = 8; //duty cycle (0 means 50% for 1 bit)
-    
+
+  pwm_max= OCR0A * 0.9; //if standard 62,5 kHz osc. used, OCR0A is zero. So replace with 255
 }
 
 
 void loop() {
 
-  float voltage = analogRead(A6) * (30.0*0.9384/ 1023.0); //voltage divider used to sense 5V at 30V real//0.9384 is the calibration value
-  
-  if (voltage < 12.5 & pwm <OCR0A*0.9) pwm = pwm+1; //do not go to 100% PWM, which does not move anything. 90% seems to be a golden value
+
+  float voltage = analogRead(A6) * (30.0*0.9961/ 1023.0); //voltage divider used to sense 5V at 30V real//0.9961 is the calibration value
+
+  if (voltage < 12.5 & pwm < pwm_max) pwm = pwm+1; //do not go to 100% PWM, which does not move anything. 90% seems to be a golden value
   else if (pwm > 0) pwm = pwm-1; //underflow can occur
   
   analogWrite(D5, pwm); //PWM on D5  analogWrite values from 0 to 255  
+  delay(50); // delay x ms
 
 }
