@@ -14,7 +14,7 @@
  * Ideal combination: the biggest trafo (with most right pin) or the smallest coil
  * + 100uF 63V capacitor
  * +schottky 1N 5819
- * +IRFP4310ZPbF
+ * +IRFP4310ZPbF --> produces a lot of heat with pwm freq higher than 62,5kHz
  * --> gives 4,2 times voltage gain
  */
 
@@ -43,7 +43,7 @@ void setup() {
   TCCR0A = _BV(COM0A1) | _BV(COM0B1) | _BV(WGM01) | _BV(WGM00);
   TCCR0B = _BV(WGM02) | _BV(CS00);
   OCR0A = 15; //freq. divider // 1--> 8MHz,1bit pwm, 3-->4Mhz,2bit pwm, 7-->2Mhz,3bit pwm, 15-->1Mhz,4bit pwm etc.
-  OCR0B = 8; //duty cycle (0 means 50% for 1 bit)
+  OCR0B = 0; //duty cycle (0 means 50% for 1 bit)
 
   pwm_max= OCR0A * 0.9; //if standard 62,5 kHz osc. used, OCR0A is zero. So replace with 255
 }
