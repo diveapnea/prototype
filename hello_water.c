@@ -1,3 +1,5 @@
+//Bir dahaki sefer buradan yararlanmaya calis: https://github.com/sparkfun/H2OhNo/blob/master/firmware/H2OhNo/H2OhNo.ino
+
 
 //en onemli
 //https://www.heise.de/developer/artikel/ATtiny-Winzlinge-ganz-gross-3329007.html
@@ -43,19 +45,13 @@ PIN is for reading in data I/O.
 #include <avr/wdt.h> //Needed to enable/disable watch dog timer
 #include <avr/interrupt.h>      // library for interrupts handling
 #include <util/delay.h>
-#include <avr/eeprom.h>
 #include <avr/power.h>  //power saving functions
-#include "TinyWireM.h"
 
 #define HIGH 1
 #define LOW 0
 #define OUTPUT 1
 #define INPUT 0
 
-
-#define DS3231_I2C_ADDRESS 0x68
-
-uint8_t emergency=0;
 
 /* functions in power.h
 power_adc_enable()   
@@ -129,7 +125,7 @@ void system_sleep() {
 //runs when pin interrupt is triggered
 ISR(PCINT0_vect)
 {
-   emergency=1; //emergency situation
+  //nothing to do, since after wake up the execution continues and falls into a loop (see the main())
 }
 
 
@@ -144,6 +140,8 @@ int main() {
 
 
 //WATER DETECTOR
+
+wdt_disable(); //disable watchdog timer to be able to stay in sleep until pin interrupt is triggered
 
 // Ensure no floating during sleep
 DDRB = 0xFF; // PORTB is output, all pins
@@ -160,18 +158,30 @@ PORTB = 0x00; // Make pins low
   OCR1B = 70; OCR1C/2 for 50% duty cycle
 */
 
-  pinMode(PB4, OUTPUT);
-  pinMode(PB3, OUTPUT);
+  //piezo is connected to PB3 and PB4 (PB3 is inverse PWM of PB4)
+  pinMode(PB4, OUTPUT); //actually all pins are out, but here to remind which pin is used for pwm
+  pinMode(PB3, OUTPUT); //actually all pins are out, but here to remind which pin is used for pwm
   TCCR1 = 0b00000011;
-  //GTCCR = 0b01010000; //enable PWM outputs on PB4 and PB3
   GTCCR = 0b01000000; //disable PWM outputs for now
   OCR1C = 100;//140;
-  OCR1B = 70;
+  OCR1B = 70; //PWM counter for PB4 and PB4
 
 
 //set interrupt pin as input
 pinMode(PB0, INPUT);
-digitalWrite(PB0, HIGH); //set the pull-up pin
+digitalWrite(PB0, LOW); //DO NOT set the pull-up pin
+//VERY IMPORTANT/////////////////
+//power consumption with pull-up in sleep: 131uA
+//power consumption without pull-up in sleep: 100-200nA
+//solder a pull-up of 10k between the input pin and the (+) side of the power switch
+// (ATTINY PIN)----(10k)----(switch)----(+)
+//               |
+//               here is the measurement end  
+//IMPORTANT: if you directly solder the resistor between the pin and the (+) of the battery
+// sometimes if the chip power is "OFF" it can drain a lot of (200uA) current.
+//if you switch on and off the chip it drops to 200nA again. Somehow the internal state of the pin 
+//causes this.
+//therefore if the chip is off, the pull-up has to be separated from the battery as well
 
 
 //general interrupt mask register
@@ -180,20 +190,18 @@ GIMSK |= (1<<PCIE);
 //set interrupt for PCINT0 --> PB0 --> Pin5
 PCMSK |= (1<< PCINT0);
 
-system_sleep();
+
+system_sleep(); //since watchdog disabled, stay here until pin interrupt produced
 
 sei(); //also with system_sleep this is required right here
 
+
 while(1){
-	if(emergency){
-		GTCCR = 0b01010000; //enable the alarm
-	}
-
-_delay_ms(50);
-OCR1C = 90; //set a frequency (2.2kHz)
-_delay_ms(50);
-OCR1C = 100; //set another frequency (2kHz)
-
+ GTCCR = 0b01010000; //enable the alarm on PB4 and PB3 by enabling the PWM
+ _delay_ms(50);
+ OCR1C = 90; //set a frequency (2.2kHz)
+ _delay_ms(50);
+ OCR1C = 100; //set another frequency (2kHz)
 }
 
 return(0);
