@@ -47,13 +47,17 @@ void setup() {
   OCR0A = 255; //freq. divider // 1--> 8MHz,1bit pwm, 3-->4Mhz,2bit pwm, 7-->2Mhz,3bit pwm, 15-->1Mhz,4bit pwm etc.
   OCR0B = OCR0A/2; //duty cycle (0 means 50% for 1 bit)
 
-  pwm_max= OCR0A * 0.8; //if standard 62,5 kHz osc. used, OCR0A is zero. So replace with 255
+  pwm_max= OCR0A * 0.90; //if standard 62,5 kHz osc. used, OCR0A is zero. So replace with 255
 
 
 }
 
 
 void loop() {
+
+  
+  //this command is same as assigning a value to OCR0B
+  analogWrite(D5, pwm); //PWM on D5  analogWrite values from 0 to 255 or OCR0A if non-zero
 
   int raw_analog_reading = analogRead(A6); //remember ADC is 10bit
   
@@ -67,15 +71,9 @@ void loop() {
 
   if (voltage < 13.0 & pwm < pwm_max) pwm = pwm+1; //do not go to 100% PWM, which does not move anything. 80-90% seems to be a golden value
   else if (pwm > 0) pwm = pwm-1; //underflow can occur
-
-  // fly away protection. Seems not to make sense but it works. Checks whether a small PWM change leverages the voltage or not
-  if(pwm > raw_analog_reading) pwm = 0;
   
   
-  //this command is same as assigning a value to OCR0B
-  analogWrite(D5, pwm); //PWM on D5  analogWrite values from 0 to 255 or OCR0A if non-zero
-  
-  delay(62500/2000); // delay x ms --> 1 s becomes 62500 due to change of the clock multiplier
+  //delay(62500/2000); // delay x ms --> 1 s becomes 62500 due to change of the clock multiplier
   
   //String result = raw_analog_reading + String(" ") + pwm;
   //Serial.println(result);
