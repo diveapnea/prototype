@@ -82,8 +82,8 @@ void find_max(int freq_divider) {
       result = result + voltage_input + String(" ") + current_input + String(" ");
       result = result + voltage_output + String(" ") + current_output + String(" ");
       if(voltage_input !=0.0 and current_input !=0.0) {
-       result = result + (voltage_output*current_output)/(voltage_input*current_input)*100 + String("%");
-      } else result = result + String("N/A%");
+       result = result + (voltage_output*current_output)/(voltage_input*current_input)*100 + String("% ");
+      } else result = result + String("N/A% ");
       result = result + freq_divider  + String(" ") + float(pwm)/freq_divider*100 + String("% ");
       Serial.println(result);
  
