@@ -1,5 +1,6 @@
 //Atmega 328 tested
 /* 
+ *  https://withinspecifications.30ohm.com/2014/02/20/Fast-PWM-on-AtMega328/
  * Pin 5 and 6 can go up tp 62,5kHz PWM
  * But the delay function becomes delay(62500) for 1 second
  * 0x01 ->62500hz
@@ -26,17 +27,17 @@ uint8_t pwm_max = 0;
 void setup() {
   //Serial.begin(9600); //max 10000 or maybe even 20000
   // put your setup code here, to run once:
- /*
+/* 
   analogWrite(D5, pwm); //PWM on D5  analogWrite values from 0 to 255  
-  TCCR0B = TCCR0B & 0b11111000 | 0x03; //Pin5 0x01 --> 62,5kHz pwm
-  pwm_max = 255 * 0.9;
+  TCCR0B = TCCR0B & 0b11111000 | 0x01; //Pin5 0x01 --> 62,5kHz pwm, 0x02...
+  pwm_max = 255 * 0.90;
 */
   /*
   pinMode(D3, OUTPUT); // output pin for OCR2B
   // Set up the 250KHz output @ D3
   TCCR2A = _BV(COM2A1) | _BV(COM2B1) | _BV(WGM21) | _BV(WGM20);
   TCCR2B = _BV(WGM22) | _BV(CS20);
-  OCR2A = 63; //freq. divider // 1--> 8MHz,1bit pwm, 3-->4Mhz,2bit pwm, 7-->2Mhz,3bit pwm, 15-->1Mhz,4bit pwm etc.
+  OCR2A = 63; //freq. divider // 1--> 8MHz,1bit pwm, 3-->4Mhz,2bit pwm, 7-->2Mhz,3bit pwm, 15-->1Mhz,4bit .. 255-->62,5kHz,8bit pwm etc.
   OCR2B = 32; //50% duty cycle. 0..to 63
 */
 
@@ -44,7 +45,7 @@ void setup() {
   // Set up the fast PWM up to 8Mhz output @D5
   TCCR0A = _BV(COM0A1) | _BV(COM0B1) | _BV(WGM01) | _BV(WGM00);
   TCCR0B = _BV(WGM02) | _BV(CS00);
-  OCR0A = 255; //freq. divider // 1--> 8MHz,1bit pwm, 3-->4Mhz,2bit pwm, 7-->2Mhz,3bit pwm, 15-->1Mhz,4bit pwm etc.
+  OCR0A = 255; //freq. divider // 1--> 8MHz,1bit pwm, 3-->4Mhz,2bit pwm, 7-->2Mhz,3bit pwm, 15-->1Mhz,4bit .. 255-->62,5kHz,8bit pwm etc.
   OCR0B = OCR0A/2; //duty cycle (0 means 50% for 1 bit)
 
   pwm_max= OCR0A * 0.90; //if standard 62,5 kHz osc. used, OCR0A is zero. So replace with 255
