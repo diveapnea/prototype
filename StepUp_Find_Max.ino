@@ -118,7 +118,7 @@ void setup() {
   
   //test for the best configuration
   for(int freq_divider = 255; freq_divider>0; freq_divider--) {
-    String result = String("Testing freq divider: ") + freq_divider + String(" ");
+    String result = String("Testing freq divider: ") + freq_dividera + String(" ");
     result = result + max_freq_divider + String(" ") + pwm_for_Vmax + String(" ") + Vmax;
     Serial.println(result);
     find_max(freq_divider);
