@@ -68,10 +68,20 @@ void find_max(int freq_divider) {
     A6_val = A6_val/decimation;  
     A7_val = A7_val/decimation;  
 
+
+ //current sensor ACS712
+  // Convert the analog reading (which goes from 0 - 1023) to a voltage (0 - 5V):  
+  //float voltage = A7_val * (5.0 / 1023.0);
+  //convert voltage into current (0.5V-->-30A, 2,5V-->0A, 4.5V-->+30A: f_current(x)=15x-37.5
+  //f_current(A7_val) =  (15 * A7_val * 5.0 / 1023.0) - 37.5 --> 0.073313 * A7_val - 37.5
+  
+  //convert voltage into current (1.5V-->-5A, 2,5V-->0A, 3.5V-->+5A: f_current(x)=5x-12.5  
+  //f_current(A7_val) =  (5 * A7_val * 5.0 / 1023.0) - 12.5 --> 0.024438 * A7_val - 12.5
+
     //voltage divider used to sense 5V at 30V real//0.9961 is the calibration value
     float voltage_input = A2_val * 5.00 / 1023.0; 
     float voltage_output = A6_val * (30.0*0.9961/ 1023.0);
-    float current_input = 0.05865*A7_val-30;
+    float current_input = 0.073313*A7_val-37.5;
     float current_output = voltage_output/178.0; //load 178ohm
     
     if(voltage_output > Vmax) {
