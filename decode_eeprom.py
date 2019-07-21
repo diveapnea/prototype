@@ -108,7 +108,7 @@ while True:
 			byte = cb.next()
 			
 	# day and month are unsigned byte
-	print("{0:03d}: {1:02d}.{2:02d}.2018".format(line_number, struct.unpack('B', byte)[0],struct.unpack('B', cb.next())[0])),
+	print("{0:03d}: {1:02d}.{2:02d}.2019".format(line_number, struct.unpack('B', byte)[0],struct.unpack('B', cb.next())[0])),
 	   			
 	byte = cb.next()
 	#Min Voltage is unsigned byte. 15.9 is the resistor divider value
