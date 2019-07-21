@@ -1051,8 +1051,8 @@ blink_led_x_times(7);
 
 
  // set date and time on DS3231
- //sec,min,hour,day of week,day,month,year
-//setDS3231time(PB1, 0,48,21,7,29,10,17); //pin6
+ //sec,min,hour,day of week (1=Sunday),day,month,year
+//setDS3231time(PB1, 0,37,15,1,21,07,19); //pin6
 
 		
 
@@ -1069,7 +1069,6 @@ blink_led_x_times(7);
 //eeprom_update_byte((uint8_t *)(uint16_t) ((eeprom_adr+2)%MAX_SIZE), 0xFF); //empty next cell due to ring buffer 
 //END OF DEBUG
 
-//candle_light_loop(); //INFINITE LOOP
 
  loop();
 
