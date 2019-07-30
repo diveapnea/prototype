@@ -20,6 +20,9 @@ all :
 	rm -f $(TARGET)
 
 install : all
+	sudo gpio -g mode 9 alt0
+	sudo gpio -g mode 10 alt0
+	sudo gpio -g mode 11 alt0
 	sudo gpio -g mode 22 out
 	sudo gpio -g write 22 0
 	sudo $(AVRDUDE) -p $(AVRDUDEMCU) -V -P /dev/spidev0.0 -c linuxspi -b 10000 -U flash:w:$(TARGET).hex
@@ -29,6 +32,9 @@ noreset : all
 	sudo $(AVRDUDE) -p $(AVRDUDEMCU) -V -P /dev/spidev0.0 -c linuxspi -b 10000 -U flash:w:$(TARGET).hex
 
 fuse :
+	sudo gpio -g mode 9 alt0
+	sudo gpio -g mode 10 alt0
+	sudo gpio -g mode 11 alt0
 	sudo gpio -g mode 22 out
 	sudo gpio -g write 22 0
 	sudo $(AVRDUDE) -p $(AVRDUDEMCU) -P /dev/spidev0.0 -c linuxspi -b 10000 -U lfuse:w:0x62:m -U hfuse:w:0xdf:m -U efuse:w:0xff:m
@@ -38,6 +44,9 @@ clean :
 	rm -f *.hex *.obj *.o *.elf
 
 eeprom :
+	sudo gpio -g mode 9 alt0
+	sudo gpio -g mode 10 alt0
+	sudo gpio -g mode 11 alt0
 	sudo gpio -g mode 22 out
 	sudo gpio -g write 22 0
 	sudo $(AVRDUDE) -p $(AVRDUDEMCU) -V -P /dev/spidev0.0 -c linuxspi -b 10000 -U eeprom:r:$(EEPROM):r

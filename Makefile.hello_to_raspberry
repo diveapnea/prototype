@@ -6,14 +6,14 @@ CC		=/usr/bin/avr-gcc
 CFLAGS		=-g -Os -Wall -mcall-prologues -DF_CPU=$(CLOCK) -mmcu=$(MCU)
 OBJ2HEX		=/usr/bin/avr-objcopy
 AVRDUDE		=/usr/bin/avrdude
-TARGET		=hello_water
+TARGET		=hello_to_raspberry
 EEPROM		=eeprom.hex
 
 all :
 	$(CC) $(CFLAGS) -c $(TARGET).c -o $(TARGET).o
-	#$(CC) $(CFLAGS) -c USI_TWI_Master.c -o USI_TWI_Master.o
-	#$(CC) $(CFLAGS) -c TinyWireM.c -o TinyWireM.o
-	#$(CC) $(CFLAGS) -o $(TARGET).elf TinyWireM.o USI_TWI_Master.o $(TARGET).o
+	$(CC) $(CFLAGS) -c USI_TWI_Master.c -o USI_TWI_Master.o
+	$(CC) $(CFLAGS) -c TinyWireM.c -o TinyWireM.o
+	$(CC) $(CFLAGS) -o $(TARGET).elf TinyWireM.o USI_TWI_Master.o $(TARGET).o
 	#$(CC) $(CFLAGS) $(TARGET).c -o $(TARGET)
 	#$(OBJ2HEX) -R .eeprom -O ihex $(TARGET) $(TARGET).hex
 	avr-objcopy -j .text -j .data -O ihex $(TARGET).elf $(TARGET).hex
